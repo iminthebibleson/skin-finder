@@ -1,0 +1,83 @@
+<html>
+<head>
+<title>Skin Finder</title>
+<style>
+table {
+ font-family: arial, sans-serif;
+ border-collapse: collapse;
+ width: 100%;
+}
+
+td, th {
+ border: 1px solid #dddddd;
+ text-align: left;
+ padding: 8px;
+}
+
+tr:nth-child(even) {
+ background-color: #dddddd;
+}
+
+a[href], a[href]:active {
+ color: blue;
+}
+</style>
+</head>
+<body></body>
+<script src="data:text/javascript;base64,LypVSS5qcyovIWZ1bmN0aW9uKGEpe3ZhciB0PSJudW1iZXIiLHM9Imxlbmd0aCIscj0iY2hpbGROb2RlcyIscT0iRG9jdW1lbnRGcmFnbWVudCIsZT0ic2xpY2UiLGY9ImFwcGVuZENoaWxkIixnPWRvY3VtZW50LGg9T2JqZWN0LGk9dm9pZCAwLGM9RWxlbWVudCxqPWZ1bmN0aW9uKG4sayl7aWYobil7dmFyIG8sdixiLG0sbDtpZigib2JqZWN0Ij09dHlwZW9mIG4pe2lmKG5bc10+PTApZm9yKG89MCx2PW5bc107bzx2OylqKG5bbysrXSxrKTtlbHNlIGlmKG4gaW5zdGFuY2VvZiBjfHxuIGluc3RhbmNlb2YgYVtxXSlrW2ZdKG4uY2xvbmVOb2RlKDEpKTtlbHNlIGlmKG4uJCBpbnN0YW5jZW9mIGgpe289e307bT1uLiQ7ZGVsZXRlIG4uJDtmb3Iodj1oLmtleXMobSk7Yj12LnNoaWZ0KCk7b1tiXT1tW2JdKTtmb3Iodj1oLmtleXMobik7Yj12LnNoaWZ0KCk7b1tiXT1uW2JdKTtuLiQ9bTtqKG8sayl9ZWxzZSBpZih0PT10eXBlb2Ygbi54KXtvPW4ueDtkZWxldGUgbi54O2Zvcih2PW87MDx2LS07aihuLGspKTtuLng9b31lbHNle2I9bi4kO209bi5fO2w9Zy5jcmVhdGVFbGVtZW50KGJ8fCJhIik7ZGVsZXRlIG4uJDtkZWxldGUgbi5fO2ZvcihvPWgua2V5cyhuKTt2PW8uc2hpZnQoKTsiYXRyXyI9PXZbZV0oMCw0KT9sLnNldEF0dHJpYnV0ZSh2W2VdKDQpLG5bdl0pOiJjc3NfIj09dltlXSgwLDQpP2wuc3R5bGVbdltlXSg0KV09blt2XTpsW3ZdPW5bdl0pO2IhPT1pJiYobi4kPWIpO20hPT1pJiYobi5fPW0pO2oobSxsKTtrW2ZdKGwpfX1lbHNlInN0cmluZyI9PXR5cGVvZiBuJiZrW2ZdKGcuY3JlYXRlVGV4dE5vZGUobikpfX07YS5VST1jLnByb3RvdHlwZS5VST1hW3FdLnByb3RvdHlwZS5VST1mdW5jdGlvbihmKXt2YXIgYz10aGlzPT1hP2dbImNyZWF0ZSIrcV0oKTp0aGlzLGU9YXJndW1lbnRzO3JldHVybiBlW3NdP2Vbc109PTEmJnQ9PXR5cGVvZiBmP2Nbcl1bZVswXV06KGMuaW5uZXJIVE1MPSIiLGooZSxjKSxjKTpoLnZhbHVlcyhjW3JdKX19KHRoaXMpOw=="></script>
+<script>
+var db = [];
+
+UI.VIEW = [
+ {
+  $: "tr",
+  _: [
+   { $: "th", _: "Name" },
+   { $: "th", _: "Location" },
+   { $: "th", _: "Image" },
+   { $: "th", _: "Model" },
+  ],
+ },
+];
+
+const create_entry = (name, nid, thumb, model) => {
+ UI.VIEW.push(
+  {
+   $: "tr",
+   _: [
+    { $: "td", _: name },
+    { $: "td", _: { href: "https://staging.ev.io/node/" + nid, _: "https://staging.ev.io/node/" + nid } },
+    { $: "td", _: { href: thumb ? "https://staging.ev.io" + thumb : "https://staging.ev.io/node/" + nid, _: thumb ? "https://staging.ev.io" + thumb : "https://staging.ev.io/node/" + nid } },
+    { $: "td", _: { href: "https://staging.ev.io" + model, _: "https://staging.ev.io" + model } },
+   ],
+  },
+ );
+};
+
+(() => {
+ let a = new XMLHttpRequest();
+ a.open("GET", "https://staging.ev.io/all-skins");
+ a.onload = () => {
+  db = JSON.parse(a.responseText);
+  db.forEach(i => {
+   create_entry(i.title, i.nid, i[Object.keys(i).filter(f => f.includes("_thumb") && i[f])[0]], i.field_model || i.field_skin);
+  });
+  document.body.UI(
+   {
+    $: "table",
+    _: UI.VIEW,
+   },
+  );
+ };
+ a.send();
+})();
+
+onclick = e => {
+ let f = e.target;
+ if (f.matches("a[href]")) {
+  window.open(f.href);
+  e.preventDefault();
+ };
+};
+</script>
+</html>
